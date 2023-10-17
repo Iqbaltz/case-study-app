@@ -2,14 +2,15 @@
 
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { FormEventHandler } from "react";
+import React, { FormEventHandler, useState } from "react";
+import { toast } from "react-toastify";
 
-type Props = { users: any };
-
-export default function LoginForm({ users }: Props) {
+export default function LoginForm() {
   const { push } = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -27,13 +28,17 @@ export default function LoginForm({ users }: Props) {
 
     if (res?.ok) {
       push("/");
+    } else {
+      toast.error("Invalid Credentials!", { position: "top-center" });
     }
+
+    setIsLoading(false);
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col bg-slate-800 p-8 rounded"
+      className="flex flex-col bg-slate-800 p-8 rounded text-white"
     >
       <h1 className="text-center font-bold text-xl mb-6">Login</h1>
       <div className="flex flex-col mb-2">
@@ -41,6 +46,7 @@ export default function LoginForm({ users }: Props) {
           Username
         </label>
         <input
+          disabled={isLoading}
           name="username"
           id="username"
           type="username"
@@ -53,6 +59,7 @@ export default function LoginForm({ users }: Props) {
           Password
         </label>
         <input
+          disabled={isLoading}
           name="password"
           id="password"
           type="password"
@@ -60,7 +67,13 @@ export default function LoginForm({ users }: Props) {
           className="px-2 py-1 mt-1 text-black"
         />
       </div>
-      <button type="submit" className="rounded p-2 bg-slate-600">
+      <button
+        disabled={isLoading}
+        type="submit"
+        className={`rounded p-2 bg-slate-600 ${
+          isLoading ? "bg-slate-30" : "opacity-100"
+        }`}
+      >
         Login
       </button>
     </form>

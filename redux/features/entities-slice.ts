@@ -1,9 +1,4 @@
-import {
-  PayloadAction,
-  createAsyncThunk,
-  createReducer,
-  createSlice,
-} from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface CartItem {
   productId: number;
@@ -25,6 +20,16 @@ export const fetchAllProducts = createAsyncThunk(
   async () => {
     const res = await fetch("https://fakestoreapi.com/products");
     const data = await res.json();
+
+    return data;
+  }
+);
+
+export const fetchCarts = createAsyncThunk(
+  "products/fetchCarts",
+  async (userId: string) => {
+    const res = await fetch(`https://fakestoreapi.com/carts/user/${userId}`);
+    const data = await res?.json();
 
     return data;
   }
@@ -58,14 +63,42 @@ export const entities = createSlice({
         (cart) => cart.productId !== action.payload
       );
     },
+    removeAllFromCart: (state) => {
+      state.carts = [];
+    },
+    decrementCartItem: (state, action: PayloadAction<number>) => {
+      const existingItem = state.carts.find(
+        (cartItem) => cartItem.productId === action.payload
+      );
+
+      if (existingItem) {
+        if (existingItem.quantity > 1) {
+          existingItem.quantity -= 1;
+        } else {
+          // Remove the item from the cart if the quantity becomes zero
+          state.carts = state.carts.filter(
+            (cart) => cart.productId !== action.payload
+          );
+        }
+      }
+    },
   },
   extraReducers(builder) {
     builder.addCase(fetchAllProducts.fulfilled, (state, action) => {
       state.products = action.payload;
     });
+    builder.addCase(fetchCarts.fulfilled, (state, action) => {
+      state.carts = action.payload?.[0]?.products || [];
+    });
   },
 });
 
-export const { addProduct, removeProduct, addToCart, removeFromCart } =
-  entities.actions;
+export const {
+  addProduct,
+  removeProduct,
+  addToCart,
+  removeFromCart,
+  removeAllFromCart,
+  decrementCartItem,
+} = entities.actions;
 export default entities.reducer;

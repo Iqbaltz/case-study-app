@@ -1,26 +1,47 @@
 "use client";
 
-import { addToCart, fetchAllProducts } from "@/redux/features/entities-slice";
+import {
+  addToCart,
+  fetchAllProducts,
+  fetchCarts,
+} from "@/redux/features/entities-slice";
 import { AppDispatch, useAppSelector } from "@/redux/store";
-import { unwrapResult } from "@reduxjs/toolkit";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { BsCartPlus } from "react-icons/bs";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function ProductList() {
   const { data: session } = useSession();
   const dispatch = useDispatch<AppDispatch>();
-
   const products = useAppSelector((state) => state.entitiesReducer.products);
-
   const userId = useAppSelector((state) => state.authReducer.value.id);
+  const { push } = useRouter();
 
   useEffect(() => {
     if (!products.length) {
       dispatch(fetchAllProducts());
     }
-  }, []);
+    if (userId) {
+      dispatch(fetchCarts(userId));
+    }
+  }, [session]);
+
+  const handleAddToCart = (id: number) => {
+    if (!session) {
+      push("/api/auth/signin");
+    } else {
+      dispatch(addToCart({ productId: id, quantity: 1 }));
+
+      toast.success("Item added to cart", {
+        position: "top-center",
+        hideProgressBar: true,
+        autoClose: 300,
+      });
+    }
+  };
 
   return (
     <div className="grid grid-cols-5 gap-4 max-w-[1200px]">
@@ -35,7 +56,7 @@ export default function ProductList() {
         }: any) => (
           <div
             key={id}
-            className="relative group bg-slate-700 p-3 rounded overflow-hidden"
+            className="relative group bg-white border border-slate-200 p-3 rounded overflow-hidden"
           >
             <img
               src={image}
@@ -47,14 +68,12 @@ export default function ProductList() {
               {category.toUpperCase()}
             </p>
             <p className="font-medium">${price}</p>
-            <div
-              onClick={() =>
-                dispatch(addToCart({ productId: id, quantity: 1 }))
-              }
-              className="opacity-0 text-xl group-hover:opacity-100 transition-opacity bg-slate-800 px-6 py-3 absolute bottom-0 right-0 cursor-pointer rounded-tl"
+            <button
+              onClick={() => handleAddToCart(Number(id))}
+              className="opacity-0 text-white text-xl group-hover:opacity-100 transition-opacity bg-slate-800 px-6 py-3 absolute bottom-0 right-0 cursor-pointer rounded-tl"
             >
               <BsCartPlus />
-            </div>
+            </button>
           </div>
         )
       )}

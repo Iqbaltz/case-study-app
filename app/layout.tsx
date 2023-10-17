@@ -6,8 +6,13 @@ import NavMenu from "./NavMenu";
 import { ReduxProvider } from "@/redux/provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const inter = Roboto({ subsets: ["latin"], weight: ["400", "700", "300"] });
+const inter = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "300"],
+});
 
 export const metadata: Metadata = {
   title: "Study Case App",
@@ -28,6 +33,7 @@ export default async function RootLayout({
           <body className={inter.className}>
             <NavMenu />
             {children}
+            <ToastContainer />
           </body>
         </ReduxProvider>
       </html>
