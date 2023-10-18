@@ -72,7 +72,7 @@ export default function CartDrawer({ openCart, closeCart, carts }: Props) {
 
   return (
     <div
-      className={`bg-slate-950/90 flex flex-col justify-between backdrop-blur p-5 w-96 fixed top-0  bottom-0 z-50 transition-transform duration-300 right-0 ${
+      className={`bg-slate-950/90 overflow-auto flex flex-col justify-between backdrop-blur p-5 w-96 fixed top-0  bottom-0 z-50 transition-transform duration-300 right-0 ${
         openCart ? "translate-x-0" : "translate-x-full"
       }`}
     >
@@ -86,7 +86,7 @@ export default function CartDrawer({ openCart, closeCart, carts }: Props) {
             <AiOutlineClose />
           </div>
         </div>
-        <ul className="my-12 max-h-[80%] overflow-auto">
+        <ul className="my-12">
           {cartData?.map(({ title, quantity, price, productId }: any) => (
             <li
               className="border-b border-white border-opacity-50 pt-5 pb-3"
