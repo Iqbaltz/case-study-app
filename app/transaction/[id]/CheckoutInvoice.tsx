@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/buttons";
 import React from "react";
 
 type Props = { id: string };
@@ -35,9 +36,7 @@ export default function CheckoutInvoice({ id }: Props) {
           <p>{currentData.total}</p>
         </li>
       </ul>
-      <button className="w-full py-3 bg-blue-600 text-white rounded-full mt-6">
-        Pay
-      </button>
+      <Button className="mt-4">Pay</Button>
     </div>
   );
 }

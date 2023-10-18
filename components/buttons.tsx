@@ -3,9 +3,9 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { logIn, logOut } from "@/redux/features/auth-slice";
 import { useDispatch } from "react-redux";
-import Link from "next/link";
 import { AppDispatch, useAppSelector } from "@/redux/store";
-import { useEffect } from "react";
+import { ButtonHTMLAttributes, useEffect } from "react";
+import { AiOutlineLoading } from "react-icons/ai";
 
 export function SignInButton() {
   const { data: session, status } = useSession();
@@ -47,4 +47,34 @@ export function SignInButton() {
 
 export function SignOutButton() {
   return <button onClick={() => signOut()}>Sign out</button>;
+}
+
+interface IButton extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+  isLoading?: boolean;
+}
+
+export function Button({
+  children,
+  disabled,
+  isLoading,
+  className,
+  ...restProps
+}: IButton) {
+  return (
+    <button
+      className={`${
+        disabled || isLoading ? "bg-slate-600" : "bg-blue-600"
+      }  flex justify-center items-center w-full p-3 font-bold rounded-full text-white  ${className}`}
+      disabled={disabled || isLoading}
+      {...restProps}
+    >
+      <div className={`animate-spin mr-2  ${isLoading ? "inline" : "hidden"}`}>
+        <AiOutlineLoading />
+      </div>
+      {children}
+    </button>
+  );
 }

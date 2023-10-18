@@ -13,6 +13,7 @@ import {
   AiOutlineLoading,
 } from "react-icons/ai";
 import { useDispatch } from "react-redux";
+import { Button } from "./buttons";
 
 type Props = { openCart: boolean; closeCart: () => void; carts: any[] };
 
@@ -127,20 +128,14 @@ export default function CartDrawer({ openCart, closeCart, carts }: Props) {
           <p className="opacity-50">Total</p>
           <p className="text-lg">${total?.toFixed(2)}</p>
         </div>
-        <button
+        <Button
           onClick={handleCheckout}
-          className={`${
-            isLoading || !carts?.length ? "bg-slate-600" : "bg-blue-600"
-          }  flex justify-center items-center w-full p-3 font-bold rounded-full my-6`}
-          disabled={isLoading || !carts?.length}
+          disabled={!carts?.length}
+          isLoading={isLoading}
+          className="my-6"
         >
-          <div
-            className={`animate-spin mr-2  ${isLoading ? "inline" : "hidden"}`}
-          >
-            <AiOutlineLoading />
-          </div>
           Proceed to Checkout
-        </button>
+        </Button>
       </div>
     </div>
   );
